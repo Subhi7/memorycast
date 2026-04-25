@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -22,7 +25,7 @@ with st.sidebar:
     run = st.button("▶ Run Forecast", type="primary", use_container_width=True)
 
     st.divider()
-    st.caption("**Demo story:**\n1. Run *Cash Inflow* → lesson saved\n2. Run *Support Volume* → memory retrieved, agent starts smarter")
+    st.caption("**Demo story:**\n1. Run *Retail Demand* → ETS lesson saved\n2. Run *Support Volume* → ML lesson saved\n3. Run *Cash Inflow* → memory retrieved, agent recommends GradientBoosting")
 
 df = DEMO_SERIES[series_name]
 uid = df["unique_id"].iloc[0]
