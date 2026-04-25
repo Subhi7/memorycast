@@ -103,7 +103,7 @@ with tab_forecast:
                 synthesis = cognee_synthesis(profile_desc)
             if synthesis:
                 st.info(f"**Cognee synthesis:** {synthesis}")
-                st.caption("↑ LLM-synthesised from the Cognee knowledge graph")
+                st.caption("↑ LLM-synthesised from the Cognee knowledge graph (vectors in Moss)")
         else:
             st.info("No prior memory found — running full model tournament for the first time.")
 

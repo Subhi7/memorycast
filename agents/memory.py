@@ -48,13 +48,27 @@ def _run_sync(coro, timeout: float = 30.0):
 
 # ── Cognee helpers ────────────────────────────────────────────────────────────
 
+_cognee_configured = False
+
+
 def _cognee_setup():
+    global _cognee_configured
+    if _cognee_configured:
+        return
     import cognee
+    import cognee_community_vector_adapter_moss.register  # noqa: F401 — registers Moss adapter
     cognee.config.set_llm_api_key(os.environ["OPENAI_API_KEY"])
     cognee.config.set_llm_model("gpt-4o-mini")
     cognee.config.set_embedding_provider("openai")
     cognee.config.set_embedding_model("text-embedding-3-small")
     cognee.config.set_embedding_dimensions(1536)
+    cognee.config.set_vector_db_config({
+        "vector_db_provider": "moss",
+        "vector_db_key": os.environ["MOSS_PROJECT_KEY"],
+        "vector_db_name": os.environ["MOSS_PROJECT_ID"],
+        "vector_dataset_database_handler": "moss",
+    })
+    _cognee_configured = True
 
 
 def _format_lesson_text(lesson: dict) -> str:
