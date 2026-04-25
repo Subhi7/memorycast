@@ -138,6 +138,65 @@ MODEL_DESCRIPTIONS = {
 }
 
 
+def get_cv_forecasts(
+    df: pd.DataFrame, horizon: int, models: list[str] | None = None
+) -> tuple[dict, pd.DataFrame]:
+    """
+    Return cross-validation forecasts for all N_WINDOWS windows — same windows
+    the tournament used for WAPE scoring.  Each model gets a DataFrame with
+    columns [ds, forecast, window].  actuals_df has [ds, actual, window].
+
+    This gives the full picture instead of just the last holdout window.
+    """
+    n = len(df)
+    window_size = n - N_WINDOWS * horizon
+    stat_models_wanted = {"SeasonalNaive", "AutoARIMA", "AutoETS"} & (set(models) if models else {"SeasonalNaive", "AutoARIMA", "AutoETS"})
+    run_ml = models is None or _ML_NAME in models
+
+    all_fc: dict[str, list] = {m: [] for m in (list(stat_models_wanted) + ([_ML_NAME] if run_ml else []))}
+    all_actuals: list = []
+
+    for w in range(N_WINDOWS):
+        train_end = window_size + w * horizon
+        train = df.iloc[:train_end].copy()
+        test = df.iloc[train_end: train_end + horizon].copy()
+
+        if stat_models_wanted:
+            sf_models = []
+            if "SeasonalNaive" in stat_models_wanted:
+                sf_models.append(SeasonalNaive(season_length=SEASON_LENGTH))
+            if "AutoARIMA" in stat_models_wanted:
+                sf_models.append(AutoARIMA(season_length=SEASON_LENGTH, max_p=3, max_q=3, approximation=True))
+            if "AutoETS" in stat_models_wanted:
+                sf_models.append(AutoETS(season_length=SEASON_LENGTH))
+            sf = StatsForecast(models=sf_models, freq="MS", n_jobs=1)
+            sf.fit(train)
+            fc = sf.predict(h=horizon).reset_index()
+            for col in stat_models_wanted:
+                if col in fc.columns:
+                    for i, row in fc.iterrows():
+                        all_fc[col].append({"ds": test["ds"].values[i], "forecast": row[col], "window": w + 1})
+
+        if run_ml:
+            y_tr = train["y"].values.astype(float)
+            X_tr, y_target = _make_lag_features(y_tr, train["ds"], ML_LAGS)
+            gb = GradientBoostingRegressor(n_estimators=100, max_depth=4, learning_rate=0.1, random_state=42)
+            gb.fit(X_tr, y_target)
+            y_hist = list(y_tr)
+            for step in range(horizon):
+                feats = [y_hist[-lag] for lag in ML_LAGS] + [test["ds"].iloc[step].month]
+                pred = float(gb.predict([feats])[0])
+                all_fc[_ML_NAME].append({"ds": test["ds"].values[step], "forecast": pred, "window": w + 1})
+                y_hist.append(pred)
+
+        for i in range(len(test)):
+            all_actuals.append({"ds": test["ds"].values[i], "actual": test["y"].values[i], "window": w + 1})
+
+    fc_dfs = {m: pd.DataFrame(rows) for m, rows in all_fc.items() if rows}
+    actuals_df = pd.DataFrame(all_actuals)
+    return fc_dfs, actuals_df
+
+
 def get_holdout_forecasts(df: pd.DataFrame, horizon: int) -> tuple[dict, pd.DataFrame]:
     """
     Fit every model on df minus the last `horizon` rows.

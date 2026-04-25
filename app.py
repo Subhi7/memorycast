@@ -10,7 +10,7 @@ import plotly.express as px
 from data import DEMO_SERIES
 from agents.profiler import profile_series, describe_profile
 from agents.tournament import (
-    run_tournament, run_final_forecast, get_holdout_forecasts,
+    run_tournament, run_final_forecast, get_holdout_forecasts, get_cv_forecasts,
     MODEL_COLORS, MODEL_DESCRIPTIONS,
 )
 from agents.memory import save_lesson, retrieve_similar, cognee_synthesis
@@ -200,8 +200,8 @@ with tab_forecast:
                 st.write(f"↳ {lesson['lesson_text']}")
                 st.write(f"↳ SkillRunEntry logged: score={skill_entry['success_score']:.2f}, improvement=+{skill_entry['improvement']*100:.1f}pp vs baseline")
 
-            st.write("**Computing holdout forecasts and future forecast…**")
-            holdout_forecasts, actuals = get_holdout_forecasts(df, horizon)
+            st.write("**Computing cross-validation forecasts and future forecast…**")
+            cv_forecasts, cv_actuals = get_cv_forecasts(df, horizon, models=list(results.keys()))
             forecast_df = run_final_forecast(df, horizon, winner)
 
             agent_status.update(
@@ -212,40 +212,71 @@ with tab_forecast:
 
         st.divider()
 
-        # ── Holdout comparison ────────────────────────────────────────────────
-        st.subheader("📈 Model Comparison — Holdout Period")
-        st.caption(
-            f"Each model trained on first {len(df) - horizon} months, forecasted the last "
-            f"{horizon} months (actuals known). Winner is the closest line to green."
+        # ── CV comparison — all 3 windows ─────────────────────────────────────
+        st.subheader("📈 Model Comparison — Cross-Validation (3 windows)")
+        skipped = [m for m in MODEL_COLORS if m not in results]
+        caption = (
+            f"WAPE averaged across {3} rolling windows of {horizon} months each. "
+            "Winner is the model closest to actuals across all windows."
         )
+        if skipped:
+            caption += f" _(focused run — {', '.join(skipped)} skipped by agent based on memory)_"
+        st.caption(caption)
 
-        train_df = df.iloc[:-horizon]
+        n = len(df)
+        window_size = n - 3 * horizon
         fig_comp = go.Figure()
+
+        # Full history as background
         fig_comp.add_trace(go.Scatter(
-            x=train_df["ds"], y=train_df["y"],
-            name="History", line=dict(color="#4f8ef7", width=2),
+            x=df["ds"], y=df["y"],
+            name="History", line=dict(color="#4f8ef7", width=1.5), opacity=0.5,
         ))
-        fig_comp.add_trace(go.Scatter(
-            x=actuals["ds"], y=actuals["actual"],
-            name="Actuals (holdout)", mode="lines+markers",
-            line=dict(color="#22c55e", width=3),
-            marker=dict(size=8),
-        ))
-        for model, fc_df in holdout_forecasts.items():
+
+        # Actuals per window (green)
+        for w in cv_actuals["window"].unique():
+            wdf = cv_actuals[cv_actuals["window"] == w]
+            fig_comp.add_trace(go.Scatter(
+                x=wdf["ds"], y=wdf["actual"],
+                name=f"Actuals (window {w})" if w == 1 else None,
+                showlegend=(w == 1),
+                mode="lines+markers",
+                line=dict(color="#22c55e", width=2.5),
+                marker=dict(size=7),
+            ))
+
+        # Forecasts per model per window
+        for model, fc_df in cv_forecasts.items():
             if model not in results:
-                continue  # focused tournament may have skipped this model
+                continue
             is_winner = model == winner
             color = MODEL_COLORS.get(model, "#888")
-            fig_comp.add_trace(go.Scatter(
-                x=fc_df["ds"], y=fc_df["forecast"],
-                name=f"{model} {'🏆' if is_winner else ''} (WAPE {results[model]['wape']:.1%})",
-                mode="lines+markers",
-                line=dict(color=color, width=3 if is_winner else 1.5, dash="solid" if is_winner else "dot"),
-                marker=dict(size=7 if is_winner else 4),
-                opacity=1.0 if is_winner else 0.45,
-            ))
+            for w in fc_df["window"].unique():
+                wdf = fc_df[fc_df["window"] == w]
+                fig_comp.add_trace(go.Scatter(
+                    x=wdf["ds"], y=wdf["forecast"],
+                    name=f"{model} {'🏆' if is_winner else ''} (WAPE {results[model]['wape']:.1%})" if w == 1 else None,
+                    showlegend=(w == 1),
+                    mode="lines+markers",
+                    line=dict(color=color, width=2.5 if is_winner else 1.5, dash="solid" if is_winner else "dot"),
+                    marker=dict(size=6 if is_winner else 4, symbol="diamond" if is_winner else "circle"),
+                    opacity=1.0 if is_winner else 0.5,
+                ))
+
+        # Vertical lines marking each window boundary
+        for w in range(3):
+            boundary_idx = window_size + w * horizon
+            if boundary_idx < len(df):
+                fig_comp.add_vline(
+                    x=df["ds"].iloc[boundary_idx],
+                    line=dict(color="#ffffff", width=1, dash="dot"),
+                    opacity=0.25,
+                    annotation_text=f"W{w+1}",
+                    annotation_position="top",
+                )
+
         fig_comp.update_layout(
-            height=420, margin=dict(t=20, b=0, l=0, r=0),
+            height=440, margin=dict(t=20, b=0, l=0, r=0),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
         )
         st.plotly_chart(fig_comp, use_container_width=True)
