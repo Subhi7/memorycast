@@ -100,11 +100,22 @@ def _run_ml(df: pd.DataFrame, horizon: int) -> dict:
     }
 
 
-def run_tournament(df: pd.DataFrame, horizon: int = 3) -> tuple[dict, str]:
-    """Run all models, return (results_dict, winner_name)."""
+def run_tournament(df: pd.DataFrame, horizon: int = 3, models: list[str] | None = None) -> tuple[dict, str]:
+    """Run models, return (results_dict, winner_name). Pass models= to run a subset."""
+    all_stat = {"SeasonalNaive", "AutoARIMA", "AutoETS"}
+    run_all = models is None
+    run_stat = run_all or bool(all_stat & set(models))
+    run_ml = run_all or _ML_NAME in (models or [])
+
     results = {}
-    results.update(_run_statsforecast(df, horizon))
-    results.update(_run_ml(df, horizon))
+    if run_stat:
+        stat_results = _run_statsforecast(df, horizon)
+        if not run_all:
+            stat_results = {k: v for k, v in stat_results.items() if k in models}
+        results.update(stat_results)
+    if run_ml:
+        results.update(_run_ml(df, horizon))
+
     winner = min(results, key=lambda k: (results[k]["wape"], abs(results[k]["bias"])))
     return results, winner
 

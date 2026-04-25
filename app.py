@@ -17,6 +17,7 @@ from agents.memory import save_lesson, retrieve_similar, cognee_synthesis
 from agents.reflection import generate_lesson
 from agents.skill_runner import log_skill_run, load_skill_runs
 from agents.skill_updater import update_skill
+from agents.claude_agent import run_agent
 
 st.set_page_config(page_title="MemoryCast", page_icon="🧠", layout="wide")
 
@@ -28,6 +29,8 @@ with st.sidebar:
     st.header("Forecast Settings")
     series_name = st.selectbox("Select time series", list(DEMO_SERIES.keys()))
     horizon = st.slider("Forecast horizon (months)", min_value=1, max_value=6, value=3)
+    agent_mode = st.toggle("🤖 Claude Agent mode", value=True,
+                           help="Claude reads SKILL.md, reasons about memory, and decides which models to run")
     run = st.button("▶ Run Forecast", type="primary", use_container_width=True)
     st.divider()
     st.caption(
@@ -114,43 +117,75 @@ with tab_forecast:
 
         with st.status("🤖 Running forecast agent…", expanded=True) as agent_status:
 
-            st.write("**Step 1 — Series profiled**")
-            st.write(f"↳ {describe_profile(profile)}")
+            if agent_mode:
+                # ── Claude Agent mode ─────────────────────────────────────────
+                st.write("**Claude Agent reading SKILL.md and memory…**")
+                agent_steps = st.empty()
+                step_log = []
 
-            st.write("**Step 2 — Memory retrieved**")
-            if memories:
-                for m in memories:
-                    st.write(f"↳ [{m.get('series_label','?')}] {m.get('winning_model','?')} won · WAPE {m.get('winner_wape',0):.1%}")
+                def on_step(label, content):
+                    step_log.append(f"**{label}**")
+                    if content and len(content) < 400:
+                        step_log.append(f"↳ {content}")
+                    agent_steps.markdown("\n\n".join(step_log[-12:]))
+
+                agent_result = run_agent(
+                    series_name, horizon=horizon,
+                    df_store=DEMO_SERIES, on_step=on_step,
+                )
+                results = agent_result["tournament_results"]
+                winner = agent_result["winner"]
+                lesson_text = agent_result["reasoning"] or ""
+
+                # Build a lesson dict for the UI (save_result already called inside agent)
+                lesson = {
+                    "lesson_text": lesson_text,
+                    "winning_model": winner,
+                    "winner_wape": results[winner]["wape"] if results else 0,
+                    "improvement_pp": round(
+                        (results.get("SeasonalNaive", {}).get("wape", 0) - results[winner]["wape"]) * 100, 1
+                    ) if results else 0,
+                    "recommendation": f"Use {winner} for {describe_profile(profile)}",
+                }
+                skill_entry = load_skill_runs()[-1] if load_skill_runs() else {}
+
             else:
-                st.write("↳ No prior memory — exploring all strategies cold")
+                # ── Manual pipeline mode ──────────────────────────────────────
+                st.write("**Step 1 — Series profiled**")
+                st.write(f"↳ {describe_profile(profile)}")
 
-            st.write("**Step 3 — Feature recipes**")
-            for model, desc in MODEL_DESCRIPTIONS.items():
-                st.write(f"↳ **{model}**: {desc}")
+                st.write("**Step 2 — Memory retrieved**")
+                if memories:
+                    for m in memories:
+                        st.write(f"↳ [{m.get('series_label','?')}] {m.get('winning_model','?')} won · WAPE {m.get('winner_wape',0):.1%}")
+                else:
+                    st.write("↳ No prior memory — exploring all strategies cold")
 
-            st.write("**Step 4 — Running tournament** (3-window backtest cross-validation)…")
-            results, winner = run_tournament(df, horizon=horizon)
-            for model, res in sorted(results.items(), key=lambda x: x[1]["wape"]):
-                icon = "🏆" if model == winner else "  "
-                st.write(f"↳ {icon} **{model}**: WAPE={res['wape']:.1%}  bias={res['bias']:+.1%}")
+                st.write("**Step 3 — Feature recipes**")
+                for model, desc in MODEL_DESCRIPTIONS.items():
+                    st.write(f"↳ **{model}**: {desc}")
 
-            st.write(f"**Step 5 — Winner: {winner}**")
+                st.write("**Step 4 — Running tournament** (3-window backtest cross-validation)…")
+                results, winner = run_tournament(df, horizon=horizon)
+                for model, res in sorted(results.items(), key=lambda x: x[1]["wape"]):
+                    icon = "🏆" if model == winner else "  "
+                    st.write(f"↳ {icon} **{model}**: WAPE={res['wape']:.1%}  bias={res['bias']:+.1%}")
 
-            st.write("**Step 6 — Computing holdout forecasts…**")
+                st.write(f"**Step 5 — Winner: {winner}**")
+                st.write("**Step 6 — Saving lesson + SkillRunEntry to memory**")
+                lesson = generate_lesson(profile, results, winner, series_label=series_name)
+                save_lesson(lesson)
+                skill_entry = log_skill_run(series_name, profile, results, winner, lesson["lesson_text"])
+                st.write(f"↳ {lesson['lesson_text']}")
+                st.write(f"↳ SkillRunEntry logged: score={skill_entry['success_score']:.2f}, improvement=+{skill_entry['improvement']*100:.1f}pp vs baseline")
+
+            st.write("**Computing holdout forecasts and future forecast…**")
             holdout_forecasts, actuals = get_holdout_forecasts(df, horizon)
-
-            st.write("**Step 7 — Generating future forecast…**")
             forecast_df = run_final_forecast(df, horizon, winner)
 
-            st.write("**Step 8 — Saving lesson + SkillRunEntry to memory**")
-            lesson = generate_lesson(profile, results, winner, series_label=series_name)
-            save_lesson(lesson)
-            skill_entry = log_skill_run(series_name, profile, results, winner, lesson["lesson_text"])
-            st.write(f"↳ {lesson['lesson_text']}")
-            st.write(f"↳ SkillRunEntry logged: score={skill_entry['success_score']:.2f}, improvement=+{skill_entry['improvement']*100:.1f}pp vs baseline")
-
             agent_status.update(
-                label=f"✅ Agent complete — **{winner}** won · {results[winner]['wape']:.1%} WAPE · score {skill_entry['success_score']:.2f}",
+                label=f"✅ Agent complete — **{winner}** won · {results[winner]['wape']:.1%} WAPE"
+                      + (f" · score {skill_entry.get('success_score', 0):.2f}" if skill_entry else ""),
                 state="complete",
             )
 
@@ -224,11 +259,11 @@ with tab_forecast:
         st.subheader("💾 Lesson Saved to Memory")
         l_col, m_col = st.columns([3, 1])
         with l_col:
-            st.markdown(f"> {lesson['lesson_text']}")
-            st.caption(f"**Stored recommendation:** {lesson['recommendation']}")
+            st.markdown(f"> {lesson.get('lesson_text', '')[:400]}")
+            st.caption(f"**Stored recommendation:** {lesson.get('recommendation', '')}")
         with m_col:
-            st.metric("Winner WAPE", f"{lesson['winner_wape']:.1%}")
-            st.metric("vs Best Loser", f"−{lesson['improvement_pp']}pp")
+            st.metric("Winner WAPE", f"{lesson.get('winner_wape', results[winner]['wape']):.1%}")
+            st.metric("vs Best Loser", f"−{lesson.get('improvement_pp', 0)}pp")
         st.success("✅ Lesson saved — the agent will use this on the next similar series.")
 
     else:
