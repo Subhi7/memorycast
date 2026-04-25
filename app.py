@@ -268,7 +268,7 @@ with tab_forecast:
             boundary_idx = window_size + w * horizon
             if boundary_idx < len(df):
                 fig_comp.add_vline(
-                    x=df["ds"].iloc[boundary_idx],
+                    x=str(df["ds"].iloc[boundary_idx]),
                     line=dict(color="#ffffff", width=1, dash="dot"),
                     opacity=0.25,
                     annotation_text=f"W{w+1}",
