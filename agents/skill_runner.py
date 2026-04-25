@@ -27,6 +27,52 @@ def _format_run_text(entry: dict) -> str:
     )
 
 
+def _build_feedback(
+    series_label: str,
+    profile: dict,
+    results: dict,
+    winner: str,
+    baseline_wape: float,
+    winner_wape: float,
+    improvement: float,
+) -> str:
+    vol = profile["volatility"]
+    seas = profile["seasonality_strength"]
+    trend = profile["trend_strength"]
+    vol_label = "high-volatility" if vol > 0.15 else "low-volatility"
+    seas_label = "strong-seasonality" if seas > 0.4 else "weak-seasonality"
+    trend_label = "strong-trend" if trend > 0.5 else "weak-trend"
+
+    # Rank all models by WAPE
+    ranked = sorted(results.items(), key=lambda x: x[1]["wape"])
+    tournament_str = ", ".join(f"{m}={v['wape']:.1%}" for m, v in ranked)
+
+    # Runner-up for context
+    losers = [(m, v["wape"]) for m, v in ranked if m != winner]
+    runner_up = f"vs runner-up {losers[0][0]} ({losers[0][1]:.1%})" if losers else ""
+
+    # Why the winner likely won
+    if winner == "AutoARIMA":
+        why = "handles autocorrelated residuals and level shifts well"
+    elif winner == "AutoETS":
+        why = "captures exponential smoothing patterns in seasonal/trend structure"
+    elif winner == "GradientBoosting":
+        why = "exploits lag features to model nonlinear volatility patterns"
+    elif winner == "SeasonalNaive":
+        why = "strong seasonal pattern made simple repetition competitive"
+    else:
+        why = "best fit for this series profile"
+
+    return (
+        f"{winner} won on '{series_label}' ({vol_label}, {seas_label}, {trend_label}). "
+        f"Profile: CV={vol:.2f}, seasonality={seas:.2f}, trend R²={trend:.2f}. "
+        f"Tournament: {tournament_str}. "
+        f"{winner} achieved {winner_wape:.1%} WAPE — "
+        f"{improvement * 100:.1f}pp better than SeasonalNaive baseline ({baseline_wape:.1%}) {runner_up}. "
+        f"Why: {why}."
+    )
+
+
 def log_skill_run(
     series_label: str,
     profile: dict,
@@ -53,7 +99,9 @@ def log_skill_run(
         "baseline_wape": round(baseline_wape, 4),
         "winner_wape": winner_wape,
         "improvement": improvement,
-        "feedback": f"{winner} beat SeasonalNaive baseline by {improvement * 100:.1f}pp WAPE",
+        "feedback": _build_feedback(
+            series_label, profile, results, winner, baseline_wape, winner_wape, improvement
+        ),
         "lesson_text": lesson_text,
         "timestamp": datetime.utcnow().isoformat(),
     }
