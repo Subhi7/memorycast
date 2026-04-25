@@ -100,5 +100,22 @@
     "feedback": "AutoARIMA beat SeasonalNaive baseline by 3.4pp WAPE",
     "lesson_text": "For low-volatility, strong-seasonality series, **AutoARIMA** achieved 1.3% WAPE \u2014 3.6pp better than GradientBoosting. Statistical model exploited the strong seasonality pattern effectively.",
     "timestamp": "2026-04-25T20:22:44.406105"
+  },
+  {
+    "run_id": "e49276b6",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9768,
+    "baseline_wape": 0.059,
+    "winner_wape": 0.0232,
+    "improvement": 0.0358,
+    "feedback": "AutoETS beat SeasonalNaive baseline by 3.6pp WAPE",
+    "lesson_text": "For high-volatility, strong-seasonality series, **AutoETS** achieved 2.3% WAPE \u2014 3.6pp better than SeasonalNaive. Statistical model exploited the strong seasonality pattern effectively.",
+    "timestamp": "2026-04-25T20:25:14.160979"
   }
 ]
