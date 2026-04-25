@@ -109,6 +109,67 @@ def run_tournament(df: pd.DataFrame, horizon: int = 3) -> tuple[dict, str]:
     return results, winner
 
 
+ML_LAGS = [1, 2, 3, 6, 12]
+ML_DATE_FEATURES = ["month"]
+
+MODEL_COLORS = {
+    "SeasonalNaive": "#94a3b8",
+    "AutoARIMA": "#f59e0b",
+    "AutoETS": "#a855f7",
+    "GradientBoosting": "#ef4444",
+}
+
+MODEL_DESCRIPTIONS = {
+    "SeasonalNaive": "Seasonal baseline — repeats last season (season_length=12)",
+    "AutoARIMA": "Auto-selects ARIMA(p,d,q) order (season_length=12, max_p=3, max_q=3)",
+    "AutoETS": "Error/Trend/Seasonality exponential smoothing (season_length=12)",
+    "GradientBoosting": f"Tree ensemble — lag features {ML_LAGS} + month-of-year",
+}
+
+
+def get_holdout_forecasts(df: pd.DataFrame, horizon: int) -> tuple[dict, pd.DataFrame]:
+    """
+    Fit every model on df minus the last `horizon` rows.
+    Returns ({model: forecast_df[ds, forecast]}, actuals_df[ds, actual]).
+    Used for visualising which model was closest to actuals.
+    """
+    train = df.iloc[:-horizon].copy()
+    test = df.iloc[-horizon:].copy()
+    forecasts = {}
+
+    # StatsForecast
+    sf = StatsForecast(
+        models=[
+            SeasonalNaive(season_length=SEASON_LENGTH),
+            AutoARIMA(season_length=SEASON_LENGTH, max_p=3, max_q=3, approximation=True),
+            AutoETS(season_length=SEASON_LENGTH),
+        ],
+        freq="MS", n_jobs=1,
+    )
+    sf.fit(train)
+    fc = sf.predict(h=horizon).reset_index()
+    for col in ["SeasonalNaive", "AutoARIMA", "AutoETS"]:
+        forecasts[col] = pd.DataFrame({"ds": test["ds"].values, "forecast": fc[col].values})
+
+    # GradientBoosting
+    y_tr = train["y"].values.astype(float)
+    X_tr, y_target = _make_lag_features(y_tr, train["ds"], ML_LAGS)
+    gb = GradientBoostingRegressor(n_estimators=100, max_depth=4, learning_rate=0.1, random_state=42)
+    gb.fit(X_tr, y_target)
+
+    y_hist = list(y_tr)
+    gb_preds = []
+    for step in range(horizon):
+        feats = [y_hist[-lag] for lag in ML_LAGS] + [test["ds"].iloc[step].month]
+        pred = float(gb.predict([feats])[0])
+        gb_preds.append(pred)
+        y_hist.append(pred)
+    forecasts[_ML_NAME] = pd.DataFrame({"ds": test["ds"].values, "forecast": gb_preds})
+
+    actuals = test[["ds", "y"]].rename(columns={"y": "actual"}).reset_index(drop=True)
+    return forecasts, actuals
+
+
 def run_final_forecast(df: pd.DataFrame, horizon: int, winner: str) -> pd.DataFrame:
     """Fit winner on full history and return forecast DataFrame with [ds, forecast]."""
     if winner in ("SeasonalNaive", "AutoARIMA", "AutoETS"):
