@@ -232,6 +232,8 @@ with tab_forecast:
             marker=dict(size=8),
         ))
         for model, fc_df in holdout_forecasts.items():
+            if model not in results:
+                continue  # focused tournament may have skipped this model
             is_winner = model == winner
             color = MODEL_COLORS.get(model, "#888")
             fig_comp.add_trace(go.Scatter(

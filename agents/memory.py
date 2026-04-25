@@ -114,11 +114,26 @@ def save_lesson(lesson: dict) -> None:
 
 
 def retrieve_similar(profile: dict, top_k: int = 3) -> list[dict]:
-    """Return top-k lessons most similar to the current series profile."""
+    """Return top-k lessons most similar to the current series profile.
+
+    Deduplicates by series_label — keeps only the most recent entry per
+    series so the memory panel shows diverse precedents, not repeated runs
+    of the same series.
+    """
     lessons = _load()
     if not lessons:
         return []
-    scored = [(_similarity(profile, l.get("series_profile", {})), l) for l in lessons]
+
+    # Keep only the most recent lesson per series label
+    seen: dict[str, dict] = {}
+    for lesson in lessons:
+        label = lesson.get("series_label", "")
+        saved = lesson.get("saved_at", "")
+        if label not in seen or saved > seen[label].get("saved_at", ""):
+            seen[label] = lesson
+
+    deduped = list(seen.values())
+    scored = [(_similarity(profile, l.get("series_profile", {})), l) for l in deduped]
     scored.sort(key=lambda x: x[0], reverse=True)
     return [l for _, l in scored[:top_k]]
 
