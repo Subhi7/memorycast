@@ -48,21 +48,27 @@ def _generate_with_claude(profile, results, winner, winner_wape, losers, series_
     worst_loser = max(losers, key=losers.get)
     improvement_pp = round((losers[worst_loser] - winner_wape) * 100, 1)
 
-    prompt = f"""You are a forecasting expert writing a reusable lesson for an AI agent's memory.
+    ranked = ", ".join(f"{k}={v['wape']:.1%}" for k, v in sorted(results.items(), key=lambda x: x[1]["wape"]))
+    extra = {}
+    if hasattr(profile, "get"):
+        extra = {k: profile.get(k) for k in ("acf_lag1", "seasonal_amplitude", "regime_shift", "trend_direction", "outlier_rate") if profile.get(k) is not None}
 
-A model tournament was run on a time series with these results:
-- Series: {series_label or 'unknown'}
-- Profile: {vol} volatility (CV={profile['volatility']:.2f}), {seas} seasonality ({profile['seasonality_strength']:.2f}), trend R²={profile['trend_strength']:.2f}
-- Tournament results (WAPE): {', '.join(f"{k}={v['wape']:.1%}" for k, v in sorted(results.items(), key=lambda x: x[1]['wape']))}
-- Winner: {winner} with {winner_wape:.1%} WAPE ({improvement_pp}pp better than {worst_loser})
+    prompt = f"""You are a forecasting expert writing a reusable memory entry for an AI agent.
 
-Write ONE concise sentence (max 25 words) explaining WHY {winner} won and when to use it again.
-Focus on the relationship between the series profile and model performance. Use markdown bold for the model name."""
+Tournament run on '{series_label or 'unknown'}':
+- Profile: {vol} volatility (CV={profile['volatility']:.2f}), {seas} seasonality ({profile['seasonality_strength']:.2f}), trend R²={profile['trend_strength']:.2f}{(', ' + ', '.join(f'{k}={v}' for k,v in extra.items())) if extra else ''}
+- Results (WAPE): {ranked}
+- Winner: **{winner}** at {winner_wape:.1%} WAPE — {improvement_pp}pp better than {worst_loser}
+
+Write a memory entry in this exact format (3 lines, no extra text):
+**Why {winner} won:** <one sentence on which profile signals drove this result>
+**When to reuse:** <one sentence on the profile conditions where {winner} should be the first choice>
+**Watch out for:** <one sentence on when this rule might fail>"""
 
     try:
         response = _get_client().messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=100,
+            max_tokens=200,
             messages=[{"role": "user", "content": prompt}],
         )
         return response.content[0].text.strip()

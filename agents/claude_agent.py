@@ -111,7 +111,15 @@ TOOLS = [
             "properties": {
                 "series_name": {"type": "string"},
                 "winner": {"type": "string"},
-                "agent_reasoning": {"type": "string", "description": "Your reasoning for why this model won and what future agents should know"},
+                "agent_reasoning": {
+                    "type": "string",
+                    "description": (
+                        "Write exactly 3 lines in this format:\n"
+                        "**Why <winner> won:** <one sentence on which profile signals drove this>\n"
+                        "**When to reuse:** <one sentence on profile conditions for this model>\n"
+                        "**Watch out for:** <one sentence on when this rule might fail>"
+                    ),
+                },
             },
             "required": ["series_name", "winner", "agent_reasoning"],
         },
