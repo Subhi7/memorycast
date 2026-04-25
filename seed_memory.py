@@ -1,5 +1,6 @@
 """
 Run this once before the demo to pre-populate memory with past forecasting lessons.
+Seeds JSON store and Cognee knowledge graph.
 Usage: uv run python seed_memory.py
 """
 import warnings
@@ -9,9 +10,9 @@ import numpy as np
 import pandas as pd
 from agents.profiler import profile_series
 from agents.tournament import run_tournament
-from agents.memory import save_lesson, _load, MEMORY_FILE
+from agents.memory import save_lesson, _load, _format_lesson_text, MEMORY_FILE, seed_cognee
 from agents.reflection import generate_lesson
-from agents.skill_runner import log_skill_run, SKILL_RUNS_FILE
+from agents.skill_runner import log_skill_run, _format_run_text, SKILL_RUNS_FILE
 
 
 def _make_df(name, y, start="2018-01-01"):
@@ -115,6 +116,13 @@ def main():
     lessons = _load()
     runs = load_skill_runs()
     print(f"Memory seeded with {len(lessons)} lessons and {len(runs)} SkillRunEntry records.")
+
+    # Populate Cognee knowledge graph (blocks until all items are remembered)
+    print(f"\nSeeding Cognee knowledge graph ({len(lessons) + len(runs)} items)…")
+    all_texts = [_format_lesson_text(l) for l in lessons] + [_format_run_text(r) for r in runs]
+    seed_cognee(all_texts, timeout_per_item=90.0)
+    print("Cognee knowledge graph seeded.")
+
     print("\nVoilà — run the demo now:")
     print("  uv run streamlit run app.py")
     print("\nDemo order for best story:")

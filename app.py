@@ -13,7 +13,7 @@ from agents.tournament import (
     run_tournament, run_final_forecast, get_holdout_forecasts,
     MODEL_COLORS, MODEL_DESCRIPTIONS,
 )
-from agents.memory import save_lesson, retrieve_similar
+from agents.memory import save_lesson, retrieve_similar, cognee_synthesis
 from agents.reflection import generate_lesson
 from agents.skill_runner import log_skill_run, load_skill_runs
 from agents.skill_updater import update_skill
@@ -91,6 +91,19 @@ with tab_forecast:
                 st.success(f"💡 **{top_count}/{total} similar past runs** favoured **{top_model}**")
             else:
                 st.warning(f"💡 **Mixed results** across {total} similar past runs — full tournament will decide")
+
+            # Cognee knowledge-graph synthesis
+            profile_desc = (
+                f"volatility={profile['volatility']:.2f} "
+                f"seasonality={profile['seasonality_strength']:.2f} "
+                f"trend={profile['trend_strength']:.2f} "
+                f"forecasting model recommendation"
+            )
+            with st.spinner("🔮 Querying Cognee knowledge graph…"):
+                synthesis = cognee_synthesis(profile_desc)
+            if synthesis:
+                st.info(f"**Cognee synthesis:** {synthesis}")
+                st.caption("↑ LLM-synthesised from the Cognee knowledge graph")
         else:
             st.info("No prior memory found — running full model tournament for the first time.")
 

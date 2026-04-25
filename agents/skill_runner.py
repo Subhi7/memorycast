@@ -1,13 +1,30 @@
 """
 Logs a SkillRunEntry after each forecasting tournament.
-JSON-backed now; Cognee stub ready to swap in.
+JSON primary; Cognee remember queued on the shared Cognee worker loop.
 """
 import json
 import uuid
 from datetime import datetime
 from pathlib import Path
 
+from agents.memory import _fire, _cognee_setup, _remember
+
 SKILL_RUNS_FILE = Path(__file__).parent.parent / "memory" / "skill_runs.json"
+
+
+def _format_run_text(entry: dict) -> str:
+    sp = entry.get("series_profile", {})
+    return (
+        f"SkillRunEntry forecasting run. "
+        f"Series: {entry['series_label']}. "
+        f"Strategy: {entry['strategy_used']} won with WAPE={entry['winner_wape']:.1%}, "
+        f"{entry['improvement']*100:.1f}pp better than SeasonalNaive baseline. "
+        f"Success score: {entry['success_score']:.2f}. "
+        f"Profile: volatility={sp.get('volatility', 0):.2f}, "
+        f"seasonality={sp.get('seasonality_strength', 0):.2f}, "
+        f"trend={sp.get('trend_strength', 0):.2f}. "
+        f"Feedback: {entry['feedback']}."
+    )
 
 
 def log_skill_run(
@@ -42,17 +59,10 @@ def log_skill_run(
     }
 
     _persist(entry)
-
-    # --- Cognee stub ---
-    # import cognee, asyncio
-    # asyncio.run(_cognee_log(entry))
+    _cognee_setup()
+    _fire(_remember(_format_run_text(entry)))
 
     return entry
-
-
-# async def _cognee_log(entry: dict):
-#     await cognee.add(json.dumps({"type": "SkillRunEntry", **entry}))
-#     await cognee.cognify()
 
 
 def load_skill_runs() -> list[dict]:

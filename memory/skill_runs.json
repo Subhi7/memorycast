@@ -1,6 +1,6 @@
 [
   {
-    "run_id": "bfe57020",
+    "run_id": "12f2c4c6",
     "series_label": "Collections Volume (Finance)",
     "series_profile": {
       "volatility": 0.182,
@@ -13,11 +13,11 @@
     "winner_wape": 0.1743,
     "improvement": 0.0174,
     "feedback": "AutoETS beat SeasonalNaive baseline by 1.7pp WAPE",
-    "lesson_text": "For high-volatility, weak-seasonality series, **AutoETS** achieved 17.4% WAPE \u2014 4.0pp better than GradientBoosting. Statistical model exploited the weak seasonality pattern effectively.",
-    "timestamp": "2026-04-25T20:22:41.626113"
+    "lesson_text": "**AutoETS** excels on high-volatility series with weak trends; use it when CV>0.15 and trend R\u00b2<0.15.",
+    "timestamp": "2026-04-25T21:50:02.659807"
   },
   {
-    "run_id": "442b0b7d",
+    "run_id": "3ecfa753",
     "series_label": "Cloud Infrastructure Spend",
     "series_profile": {
       "volatility": 0.186,
@@ -30,11 +30,11 @@
     "winner_wape": 0.169,
     "improvement": 0.0,
     "feedback": "SeasonalNaive beat SeasonalNaive baseline by 0.0pp WAPE",
-    "lesson_text": "For high-volatility, weak-seasonality series, **SeasonalNaive** achieved 16.9% WAPE \u2014 3.0pp better than GradientBoosting. SeasonalNaive was the most stable model across backtest windows.",
-    "timestamp": "2026-04-25T20:22:42.136949"
+    "lesson_text": "**SeasonalNaive** won because weak trend (R\u00b2=0.13) and seasonality made simple baselines optimal; use for volatile series lacking strong patterns.",
+    "timestamp": "2026-04-25T21:50:05.376999"
   },
   {
-    "run_id": "a667a8a1",
+    "run_id": "8742fd5e",
     "series_label": "Enterprise Support Tickets",
     "series_profile": {
       "volatility": 0.218,
@@ -47,11 +47,11 @@
     "winner_wape": 0.1536,
     "improvement": 0.0653,
     "feedback": "AutoARIMA beat SeasonalNaive baseline by 6.5pp WAPE",
-    "lesson_text": "For high-volatility, weak-seasonality series, **AutoARIMA** achieved 15.4% WAPE \u2014 7.5pp better than GradientBoosting. Statistical model exploited the weak seasonality pattern effectively.",
-    "timestamp": "2026-04-25T20:22:42.738558"
+    "lesson_text": "**AutoARIMA** excels on high-volatility series with weak trend; use it for noisy support ticket data over complex learners.",
+    "timestamp": "2026-04-25T21:50:07.100494"
   },
   {
-    "run_id": "520afb07",
+    "run_id": "967c0cbc",
     "series_label": "E-commerce Orders",
     "series_profile": {
       "volatility": 0.136,
@@ -64,11 +64,11 @@
     "winner_wape": 0.0164,
     "improvement": 0.0048,
     "feedback": "AutoETS beat SeasonalNaive baseline by 0.5pp WAPE",
-    "lesson_text": "For low-volatility, strong-seasonality series, **AutoETS** achieved 1.6% WAPE \u2014 2.1pp better than GradientBoosting. Statistical model exploited the strong seasonality pattern effectively.",
-    "timestamp": "2026-04-25T20:22:43.149674"
+    "lesson_text": "**AutoETS** excels on low-volatility, high-seasonality data with no trend; prefer it for stable seasonal patterns.",
+    "timestamp": "2026-04-25T21:50:08.645787"
   },
   {
-    "run_id": "bc024d5d",
+    "run_id": "b8f5c572",
     "series_label": "Seasonal Ad Spend",
     "series_profile": {
       "volatility": 0.137,
@@ -81,11 +81,11 @@
     "winner_wape": 0.03,
     "improvement": 0.0141,
     "feedback": "GradientBoosting beat SeasonalNaive baseline by 1.4pp WAPE",
-    "lesson_text": "For low-volatility, strong-seasonality series, **GradientBoosting** achieved 3.0% WAPE \u2014 3.0pp better than AutoARIMA. GradientBoosting was the most stable model across backtest windows.",
-    "timestamp": "2026-04-25T20:22:43.590014"
+    "lesson_text": "**GradientBoosting** excels at capturing complex seasonal patterns in low-volatility series; use it for similar stable, highly seasonal data.",
+    "timestamp": "2026-04-25T21:50:10.296750"
   },
   {
-    "run_id": "12aa5d6a",
+    "run_id": "92cbb872",
     "series_label": "SaaS Annual Recurring Revenue",
     "series_profile": {
       "volatility": 0.067,
@@ -98,24 +98,7 @@
     "winner_wape": 0.0127,
     "improvement": 0.0338,
     "feedback": "AutoARIMA beat SeasonalNaive baseline by 3.4pp WAPE",
-    "lesson_text": "For low-volatility, strong-seasonality series, **AutoARIMA** achieved 1.3% WAPE \u2014 3.6pp better than GradientBoosting. Statistical model exploited the strong seasonality pattern effectively.",
-    "timestamp": "2026-04-25T20:22:44.406105"
-  },
-  {
-    "run_id": "e49276b6",
-    "series_label": "Retail Demand (Seasonal)",
-    "series_profile": {
-      "volatility": 0.189,
-      "seasonality_strength": 0.981,
-      "trend_strength": 0.11
-    },
-    "strategy_used": "AutoETS",
-    "success_score": 0.9768,
-    "baseline_wape": 0.059,
-    "winner_wape": 0.0232,
-    "improvement": 0.0358,
-    "feedback": "AutoETS beat SeasonalNaive baseline by 3.6pp WAPE",
-    "lesson_text": "For high-volatility, strong-seasonality series, **AutoETS** achieved 2.3% WAPE \u2014 3.6pp better than SeasonalNaive. Statistical model exploited the strong seasonality pattern effectively.",
-    "timestamp": "2026-04-25T20:25:14.160979"
+    "lesson_text": "**AutoARIMA** excels on stable, seasonal series with strong trends; use it for predictable business metrics with consistent patterns.",
+    "timestamp": "2026-04-25T21:50:12.398011"
   }
 ]
