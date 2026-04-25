@@ -35,7 +35,12 @@ TOOLS = [
     },
     {
         "name": "profile_series",
-        "description": "Compute volatility, seasonality strength, and trend R² for the series. Returns a profile dict and a human-readable description.",
+        "description": (
+            "Compute a rich profile for the series. Returns: volatility (CV), seasonality_strength (ACF lag-12), "
+            "trend_strength (R²), trend_direction (up/down/flat), trend_slope_pct (% per month), "
+            "peak_month (1-12), seasonal_amplitude, acf_lag1 (AR signal strength), recent_growth, "
+            "yoy_change, outlier_rate, skewness, is_stationary, regime_shift, mean, std."
+        ),
         "input_schema": {
             "type": "object",
             "properties": {
@@ -236,14 +241,22 @@ def run_agent(series_name: str, horizon: int = 3, df_store: dict = None, on_step
     system = f"""You are a self-improving forecasting agent. Your job is to forecast '{series_name}'.
 
 Follow this process:
-1. Call get_skill to read your strategy rules (including any learned rules from past runs).
-2. Call profile_series to understand this series.
+1. Call get_skill to read your strategy and any learned rules from past runs.
+2. Call profile_series — use ALL fields to reason about the series:
+   - high acf_lag1 (>0.7) → strong AR structure → AutoARIMA likely good
+   - regime_shift > 1.5 → structural break → GradientBoosting handles non-stationarity better
+   - seasonal_amplitude > 0.3 → strong seasonal swing → AutoETS or SeasonalNaive competitive
+   - outlier_rate > 0.1 → noisy data → ML lag features more robust
+   - is_stationary=False → differencing needed → ARIMA family preferred
+   - trend_direction=up/down + trend_strength > 0.6 → AutoARIMA or AutoETS with trend component
 3. Call retrieve_memory to find similar past runs.
-4. Decide: if memory is strong (3/3 agree) AND a learned rule confirms, use run_focused_tournament.
-   Otherwise use run_full_tournament.
-5. Call save_result with your reasoning — explain WHY the winner won and what future agents should learn.
+4. Decide which models to run:
+   - Strong memory consensus (3/3) + profile confirms → run_focused_tournament (2-3 models)
+   - Mixed memory or new profile type → run_full_tournament
+5. Call save_result — write a lesson that explains the profile signals, why the winner won,
+   and what future agents should look for on similar series.
 
-Be decisive. Use the learned rules in SKILL.md. Prefer fewer tool calls when memory is clear."""
+Be specific about which profile signals drove your model choice."""
 
     messages = [{"role": "user", "content": f"Forecast '{series_name}' with a {horizon}-month horizon. Series name for all tool calls: '{series_name}'"}]
 

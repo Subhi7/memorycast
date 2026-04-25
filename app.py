@@ -63,6 +63,27 @@ with tab_forecast:
         metric_cols[1].metric("Seasonality", f"{profile['seasonality_strength']:.2f}")
         metric_cols[2].metric("Trend R²", f"{profile['trend_strength']:.2f}")
 
+        ext_cols = st.columns(4)
+        ext_cols[0].metric("ACF lag-1", f"{profile.get('acf_lag1', 0):.2f}",
+                           help="Autocorrelation at lag 1 — high = strong AR structure")
+        ext_cols[1].metric("Seasonal amp", f"{profile.get('seasonal_amplitude', 0):.2f}",
+                           help="Peak-to-trough swing relative to mean")
+        ext_cols[2].metric("Regime shift", f"{profile.get('regime_shift', 0):.2f}",
+                           help="Mean shift in sigma units — >1.5 = structural break")
+        ext_cols[3].metric("Outlier rate", f"{profile.get('outlier_rate', 0):.0%}",
+                           help="Fraction of IQR outliers")
+
+        extra_parts = []
+        if profile.get("trend_direction"):
+            extra_parts.append(f"Trend: {profile['trend_direction']} ({profile.get('trend_slope_pct', 0):+.2f}%/mo)")
+        if profile.get("peak_month"):
+            import calendar
+            extra_parts.append(f"Peak month: {calendar.month_abbr[profile['peak_month']]}")
+        extra_parts.append(f"YoY change: {profile.get('yoy_change', 0):+.1%}")
+        extra_parts.append(f"Skew: {profile.get('skewness', 0):.2f}")
+        extra_parts.append("Stationary" if profile.get("is_stationary") else "Non-stationary")
+        st.caption(" · ".join(extra_parts))
+
         fig_hist = px.line(df, x="ds", y="y", title="Historical series")
         fig_hist.update_layout(height=220, margin=dict(t=30, b=0, l=0, r=0), showlegend=False)
         fig_hist.update_traces(line_color="#4f8ef7")
