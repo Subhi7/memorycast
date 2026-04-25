@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemoryCast — Hackathon Slide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0f;
+    color: #e2e8f0;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 720px;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+    position: relative;
+  }
+
+  /* ── Top banner ── */
+  .top-banner {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px 16px;
+    border-bottom: 1px solid rgba(99,102,241,0.2);
+    background: linear-gradient(90deg, rgba(99,102,241,0.08) 0%, transparent 60%);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .logo-name {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-tagline {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .award-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(251,191,36,0.08));
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fbbf24;
+    letter-spacing: 0.3px;
+  }
+
+  .award-badge::before { content: '🏆'; font-size: 14px; }
+
+  .stack-pills {
+    display: flex;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.25);
+    color: #a5b4fc;
+  }
+
+  /* ── Left column ── */
+  .left-col {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 20px 20px 20px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-right: 1px solid rgba(99,102,241,0.12);
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    color: #6366f1;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .problem-box {
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .problem-box .headline {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fca5a5;
+    margin-bottom: 6px;
+  }
+
+  .problem-box p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  .solution-box {
+    background: rgba(99,102,241,0.06);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .solution-box .headline {
+    font-size: 14px;
+    font-weight: 600;
+    color: #a5b4fc;
+    margin-bottom: 6px;
+  }
+
+  .solution-box p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* stat cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(99,102,241,0.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .stat-card .val {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, #818cf8, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-card .lbl {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ── Right column ── */
+  .right-col {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 20px 32px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* Self-improvement loop diagram */
+  .loop-section {
+    flex: 0 0 auto;
+  }
+
+  .loop-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .loop-node {
+    flex: 1;
+    background: rgba(15,23,42,0.7);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(99,102,241,0.2);
+  }
+
+  .loop-node .node-icon { font-size: 18px; line-height: 1; }
+  .loop-node .node-title { font-size: 11px; font-weight: 600; color: #c7d2fe; margin-top: 4px; }
+  .loop-node .node-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+  .loop-node.highlight {
+    border-color: rgba(99,102,241,0.5);
+    background: rgba(99,102,241,0.1);
+  }
+
+  .arrow {
+    font-size: 14px;
+    color: #4f46e5;
+    padding: 0 4px;
+    flex: 0 0 auto;
+  }
+
+  /* Skill evolution */
+  .skill-section {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .skill-comparison {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    margin-top: 8px;
+    height: 180px;
+  }
+
+  .skill-box {
+    background: rgba(15,23,42,0.6);
+    border-radius: 8px;
+    padding: 10px 12px;
+    overflow: hidden;
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+
+  .skill-box.v2 {
+    border-color: rgba(52,211,153,0.3);
+    background: rgba(16,42,30,0.5);
+  }
+
+  .skill-version {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .v-badge {
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .v1-badge { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .v2-badge { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+
+  .skill-rule {
+    font-size: 10.5px;
+    color: #94a3b8;
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .skill-rule:last-child { border-bottom: none; }
+
+  .rule-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #4f46e5;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .rule-dot.learned { background: #34d399; }
+
+  .skill-rule.new-rule { color: #a7f3d0; }
+
+  .diff-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #34d399;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .diff-count {
+    font-size: 9px;
+    color: #34d399;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* Evidence row */
+  .evidence-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  .evidence-card {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .evidence-card .ev-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #34d399;
+    margin-bottom: 4px;
+  }
+
+  .evidence-card .ev-text {
+    font-size: 11px;
+    color: #cbd5e1;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .evidence-card .ev-text strong {
+    color: #6ee7b7;
+    font-weight: 600;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 32px;
+    border-top: 1px solid rgba(99,102,241,0.12);
+    background: rgba(99,102,241,0.03);
+  }
+
+  .footer-stack {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #475569;
+  }
+
+  .footer-stack span { color: #6366f1; font-weight: 600; }
+  .footer-sep { color: #1e293b; }
+
+  .footer-gh {
+    font-size: 11px;
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .highlight-number {
+    color: #fbbf24;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- ── TOP BANNER ── -->
+  <div class="top-banner">
+    <div class="logo-area">
+      <span class="logo-name">MemoryCast</span>
+      <span class="logo-tagline">A forecasting agent that gets smarter with every run</span>
+    </div>
+    <div class="award-badge">Best Self-Improvement Loop</div>
+    <div class="stack-pills">
+      <span class="pill">Claude API</span>
+      <span class="pill">Cognee</span>
+      <span class="pill">Moss</span>
+      <span class="pill">Daytona</span>
+    </div>
+  </div>
+
+  <!-- ── LEFT COLUMN ── -->
+  <div class="left-col">
+
+    <div class="problem-box">
+      <div class="section-label">The Problem</div>
+      <div class="headline">One model doesn't fit all time-series</div>
+      <p>High-volatility revenue data needs ML. Stable seasonal demand needs ETS. There's no single best forecasting model — and humans can't reason across thousands of past runs to know which to pick.</p>
+    </div>
+
+    <div class="solution-box">
+      <div class="section-label">The Solution</div>
+      <div class="headline">An agent that learns its own rules</div>
+      <p>MemoryCast profiles each series, queries Cognee for similar past runs, selects models autonomously, and writes new rules into its own SKILL.md — permanently improving its strategy.</p>
+    </div>
+
+    <div>
+      <div class="section-label">Run History (18 runs)</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="val">92.1%</div>
+          <div class="lbl">Avg success score</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">+3.3pp</div>
+          <div class="lbl">Avg vs naive baseline</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">+8.3pp</div>
+          <div class="lbl">Best single run</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">5/5</div>
+          <div class="lbl">AutoETS rule accuracy</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT COLUMN ── -->
+  <div class="right-col">
+
+    <!-- Self-improvement loop -->
+    <div class="loop-section">
+      <div class="section-label">Self-Improvement Loop</div>
+      <div class="loop-diagram">
+        <div class="loop-node">
+          <div class="node-icon">📊</div>
+          <div class="node-title">Profile</div>
+          <div class="node-sub">volatility · seasonality · trend</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="loop-node">
+          <div class="node-icon">🧠</div>
+          <div class="node-title">Recall</div>
+          <div class="node-sub">Cognee + Moss vectors</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="loop-node highlight">
+          <div class="node-icon">🤖</div>
+          <div class="node-title">Claude Agent</div>
+          <div class="node-sub">7 tools · focused tournament</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="loop-node">
+          <div class="node-icon">📝</div>
+          <div class="node-title">SkillRunEntry</div>
+          <div class="node-sub">score · lesson → Cognee</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="loop-node highlight">
+          <div class="node-icon">⚡</div>
+          <div class="node-title">SKILL.md v2</div>
+          <div class="node-sub">learned rules written</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill evolution diff -->
+    <div class="skill-section">
+      <div class="section-label">SKILL.md Evolution — What the Agent Learned</div>
+      <div class="skill-comparison">
+
+        <div class="skill-box">
+          <div class="skill-version"><span class="v-badge v1-badge">v1 — BEFORE</span> Manual rules only</div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>Profile series volatility, seasonality, trend</span>
+          </div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>If no memory → run full tournament</span>
+          </div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>Strong seasonality → prefer statistical models</span>
+          </div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>High volatility → prefer ML lag models</span>
+          </div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>Select winner by lowest WAPE</span>
+          </div>
+        </div>
+
+        <div class="diff-arrow">
+          →
+          <div class="diff-count">+3 learned<br>rules</div>
+        </div>
+
+        <div class="skill-box v2">
+          <div class="skill-version"><span class="v-badge v2-badge">v2 — AFTER</span> 18 runs of evidence</div>
+          <div class="skill-rule">
+            <span class="rule-dot"></span>
+            <span>All v1 rules retained</span>
+          </div>
+          <div class="skill-rule new-rule">
+            <span class="rule-dot learned"></span>
+            <span><strong>High-vol + strong-seas → AutoETS first</strong><br>
+            Evidence: 5/5 runs, avg 2.9% WAPE</span>
+          </div>
+          <div class="skill-rule new-rule">
+            <span class="rule-dot learned"></span>
+            <span><strong>High-vol + weak-seas → AutoARIMA first</strong><br>
+            Evidence: 6/10 wins, avg 12.1% WAPE</span>
+          </div>
+          <div class="skill-rule new-rule">
+            <span class="rule-dot learned"></span>
+            <span><strong>Regime shift + high volatility → GradientBoosting</strong><br>
+            Evidence: +8.3pp over baseline on burst series</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Evidence row -->
+    <div class="evidence-row">
+      <div class="evidence-card">
+        <div class="ev-label">Cognee Memory</div>
+        <div class="ev-text">
+          <strong>18</strong> SkillRunEntries<br>
+          stored in <strong>Moss</strong> vector store<br>
+          retrieved by cosine similarity
+        </div>
+      </div>
+      <div class="evidence-card">
+        <div class="ev-label">Focused Tournament</div>
+        <div class="ev-text">
+          Memory consensus → Claude skips<br>
+          low-confidence models<br>
+          <strong>~40% compute saved</strong>
+        </div>
+      </div>
+      <div class="evidence-card">
+        <div class="ev-label">Reproducible</div>
+        <div class="ev-text">
+          <strong>uv run seed_memory.py</strong><br>
+          <strong>uv run streamlit run app.py</strong><br>
+          Daytona-ready devcontainer
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <div class="footer-stack">
+      Built with
+      <span>Claude claude-haiku-4-5-20251001</span> <span class="footer-sep">·</span>
+      <span>Cognee remember/recall</span> <span class="footer-sep">·</span>
+      <span>Moss cloud vectors</span> <span class="footer-sep">·</span>
+      <span>Daytona devcontainer</span> <span class="footer-sep">·</span>
+      <span>StatsForecast + sklearn</span>
+    </div>
+    <div class="footer-gh">github.com/Subhi7/memorycast</div>
+  </div>
+
+</div>
+</body>
+</html>

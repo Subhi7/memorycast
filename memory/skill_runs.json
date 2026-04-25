@@ -1,6 +1,6 @@
 [
   {
-    "run_id": "12f2c4c6",
+    "run_id": "fb19ae13",
     "series_label": "Collections Volume (Finance)",
     "series_profile": {
       "volatility": 0.182,
@@ -12,12 +12,12 @@
     "baseline_wape": 0.1917,
     "winner_wape": 0.1743,
     "improvement": 0.0174,
-    "feedback": "AutoETS beat SeasonalNaive baseline by 1.7pp WAPE",
-    "lesson_text": "**AutoETS** excels on high-volatility series with weak trends; use it when CV>0.15 and trend R\u00b2<0.15.",
-    "timestamp": "2026-04-25T21:50:02.659807"
+    "feedback": "AutoETS won on 'Collections Volume (Finance)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.08, trend R\u00b2=0.09. Tournament: AutoETS=17.4%, AutoARIMA=19.0%, SeasonalNaive=19.2%, GradientBoosting=21.4%. AutoETS achieved 17.4% WAPE \u2014 1.7pp better than SeasonalNaive baseline (19.2%) vs runner-up AutoARIMA (19.0%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** AutoETS excels on this series because weak trend (R\u00b2=0.09) and moderate autocorrelation (lag1=0.248) favor statistical smoothing over tree-based learning, and the seasonal amplitude (0.257) is substantial enough for ETS decomposition to add value without overfitting.\n\n**When to reuse:** Prioritize AutoETS first when facing high-volatility financial series with weak linear trends, modest autocorrelation (0.2\u20130.3), and seasonal patterns present but not dominant.\n\n**Watch out for:** This advantage may vanish if regime shifts (0.547 here) accelerate or if the series transitions to stronger trending behavior, where ARIMA or gradient boosting can adapt faster to structural breaks.",
+    "timestamp": "2026-04-25T23:12:28.515122"
   },
   {
-    "run_id": "3ecfa753",
+    "run_id": "8ea45032",
     "series_label": "Cloud Infrastructure Spend",
     "series_profile": {
       "volatility": 0.186,
@@ -29,12 +29,12 @@
     "baseline_wape": 0.169,
     "winner_wape": 0.169,
     "improvement": 0.0,
-    "feedback": "SeasonalNaive beat SeasonalNaive baseline by 0.0pp WAPE",
-    "lesson_text": "**SeasonalNaive** won because weak trend (R\u00b2=0.13) and seasonality made simple baselines optimal; use for volatile series lacking strong patterns.",
-    "timestamp": "2026-04-25T21:50:05.376999"
+    "feedback": "SeasonalNaive won on 'Cloud Infrastructure Spend' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.00, trend R\u00b2=0.13. Tournament: SeasonalNaive=16.9%, AutoARIMA=17.2%, AutoETS=17.4%, GradientBoosting=19.9%. SeasonalNaive achieved 16.9% WAPE \u2014 0.0pp better than SeasonalNaive baseline (16.9%) vs runner-up AutoARIMA (17.2%). Why: strong seasonal pattern made simple repetition competitive.",
+    "lesson_text": "**Why SeasonalNaive won:** High regime shift (0.936) and weak trend (R\u00b2=0.13) made recent seasonal patterns more predictive than learning complex dynamics, while low autocorrelation (0.235) limited ARIMA's advantage.\n\n**When to reuse:** Apply SeasonalNaive first for high-volatility time series with regime shifts >0.8, trend R\u00b2 <0.15, and weak autocorrelation, especially when seasonality amplitude is moderate (0.2\u20130.4).\n\n**Watch out for:** This rule may fail if regime shifts are temporary blips rather than structural breaks, or if the seasonal pattern itself is changing; validate with recent hold-out data before deployment.",
+    "timestamp": "2026-04-25T23:12:31.487955"
   },
   {
-    "run_id": "8742fd5e",
+    "run_id": "9b8a4401",
     "series_label": "Enterprise Support Tickets",
     "series_profile": {
       "volatility": 0.218,
@@ -46,12 +46,12 @@
     "baseline_wape": 0.2189,
     "winner_wape": 0.1536,
     "improvement": 0.0653,
-    "feedback": "AutoARIMA beat SeasonalNaive baseline by 6.5pp WAPE",
-    "lesson_text": "**AutoARIMA** excels on high-volatility series with weak trend; use it for noisy support ticket data over complex learners.",
-    "timestamp": "2026-04-25T21:50:07.100494"
+    "feedback": "AutoARIMA won on 'Enterprise Support Tickets' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.22, seasonality=0.06, trend R\u00b2=0.15. Tournament: AutoARIMA=15.4%, AutoETS=21.6%, SeasonalNaive=21.9%, GradientBoosting=22.8%. AutoARIMA achieved 15.4% WAPE \u2014 6.5pp better than SeasonalNaive baseline (21.9%) vs runner-up AutoETS (21.6%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Weak trend (R\u00b2=0.15), minimal autocorrelation (lag1=-0.007), and low seasonality (0.06) made this a simple mean-reverting process where AutoARIMA's parsimonious ARIMA structures outperformed complex learners that overfit the noise.\n\n**When to reuse:** Apply AutoARIMA first when facing high-volatility series with trend R\u00b2<0.20, seasonal strength <0.10, and acf_lag1 near zero\u2014especially in operational metrics like support tickets with erratic but non-persistent patterns.\n\n**Watch out for:** This rule may fail if regime shifts (0.777 here) accelerate or if true structural breaks occur; AutoARIMA can struggle when the data-generating process changes fundamentally, potentially requiring adaptive or ensemble methods instead.",
+    "timestamp": "2026-04-25T23:12:37.122768"
   },
   {
-    "run_id": "967c0cbc",
+    "run_id": "c76a1e2c",
     "series_label": "E-commerce Orders",
     "series_profile": {
       "volatility": 0.136,
@@ -63,12 +63,12 @@
     "baseline_wape": 0.0212,
     "winner_wape": 0.0164,
     "improvement": 0.0048,
-    "feedback": "AutoETS beat SeasonalNaive baseline by 0.5pp WAPE",
-    "lesson_text": "**AutoETS** excels on low-volatility, high-seasonality data with no trend; prefer it for stable seasonal patterns.",
-    "timestamp": "2026-04-25T21:50:08.645787"
+    "feedback": "AutoETS won on 'E-commerce Orders' (low-volatility, strong-seasonality, weak-trend). Profile: CV=0.14, seasonality=0.98, trend R\u00b2=0.00. Tournament: AutoETS=1.6%, AutoARIMA=1.8%, SeasonalNaive=2.1%, GradientBoosting=3.7%. AutoETS achieved 1.6% WAPE \u2014 0.5pp better than SeasonalNaive baseline (2.1%) vs runner-up AutoARIMA (1.8%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Strong seasonal structure (0.98) with high autocorrelation (0.849) and flat trend are ideal for exponential smoothing's additive decomposition, while low volatility (CV=0.14) minimizes the noise that derails complex models.\n\n**When to reuse:** Choose AutoETS first for e-commerce or retail data with seasonal_strength >0.90, acf_lag1 >0.80, trend_direction=flat, and CV <0.20.\n\n**Watch out for:** This rule may fail if regime shifts increase above 0.05 or if trend direction changes to upward/downward, as AutoETS struggles with structural breaks and sustained trends that gradient boosting can capture.",
+    "timestamp": "2026-04-25T23:12:39.884408"
   },
   {
-    "run_id": "b8f5c572",
+    "run_id": "9c25b252",
     "series_label": "Seasonal Ad Spend",
     "series_profile": {
       "volatility": 0.137,
@@ -80,12 +80,12 @@
     "baseline_wape": 0.0441,
     "winner_wape": 0.03,
     "improvement": 0.0141,
-    "feedback": "GradientBoosting beat SeasonalNaive baseline by 1.4pp WAPE",
-    "lesson_text": "**GradientBoosting** excels at capturing complex seasonal patterns in low-volatility series; use it for similar stable, highly seasonal data.",
-    "timestamp": "2026-04-25T21:50:10.296750"
+    "feedback": "GradientBoosting won on 'Seasonal Ad Spend' (low-volatility, strong-seasonality, weak-trend). Profile: CV=0.14, seasonality=0.91, trend R\u00b2=0.01. Tournament: GradientBoosting=3.0%, AutoETS=3.4%, SeasonalNaive=4.4%, AutoARIMA=6.0%. GradientBoosting achieved 3.0% WAPE \u2014 1.4pp better than SeasonalNaive baseline (4.4%) vs runner-up AutoETS (3.4%). Why: exploits lag features to model nonlinear volatility patterns.",
+    "lesson_text": "**Why GradientBoosting won:** Strong autocorrelation (0.783) and stable seasonality (0.91) with minimal trend allowed GradientBoosting to learn non-linear seasonal patterns and lag dependencies more effectively than statistical methods.\n\n**When to reuse:** Choose GradientBoosting first for low-volatility series (CV<0.2) with high seasonality (>0.85) and strong autocorrelation (ACF>0.7) where trend is flat or weak.\n\n**Watch out for:** GradientBoosting may overfit or underperform if seasonality weakens, outliers spike above 5%, or the seasonal pattern shifts structurally\u2014revert to AutoETS in those cases.",
+    "timestamp": "2026-04-25T23:12:42.578005"
   },
   {
-    "run_id": "92cbb872",
+    "run_id": "f4f67e5e",
     "series_label": "SaaS Annual Recurring Revenue",
     "series_profile": {
       "volatility": 0.067,
@@ -97,8 +97,246 @@
     "baseline_wape": 0.0465,
     "winner_wape": 0.0127,
     "improvement": 0.0338,
-    "feedback": "AutoARIMA beat SeasonalNaive baseline by 3.4pp WAPE",
-    "lesson_text": "**AutoARIMA** excels on stable, seasonal series with strong trends; use it for predictable business metrics with consistent patterns.",
-    "timestamp": "2026-04-25T21:50:12.398011"
+    "feedback": "AutoARIMA won on 'SaaS Annual Recurring Revenue' (low-volatility, strong-seasonality, strong-trend). Profile: CV=0.07, seasonality=0.73, trend R\u00b2=0.87. Tournament: AutoARIMA=1.3%, AutoETS=1.3%, SeasonalNaive=4.7%, GradientBoosting=4.8%. AutoARIMA achieved 1.3% WAPE \u2014 3.4pp better than SeasonalNaive baseline (4.7%) vs runner-up AutoETS (1.3%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** High autocorrelation (0.834) and strong trend (R\u00b2=0.87) with stable seasonality made the ARIMA framework's autoregressive components and explicit trend modeling significantly outperform black-box methods that struggled with the low-noise regime.\n\n**When to reuse:** AutoARIMA should be the first choice for financial/business metrics with CV<0.1, trend R\u00b2>0.8, and ACF lag-1>0.8, especially when seasonality is regular and regime-shift risk is moderate.\n\n**Watch out for:** This rule may fail if regime shifts become abrupt (>3.0) or if the data experiences sudden structural breaks where historical autocorrelation no longer predicts future patterns, favoring adaptive methods instead.",
+    "timestamp": "2026-04-25T23:12:46.202126"
+  },
+  {
+    "run_id": "ec3a50ea",
+    "series_label": "Cash Inflow (Volatile)",
+    "series_profile": {
+      "volatility": 0.184,
+      "seasonality_strength": 0.273,
+      "trend_strength": 0.248
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9064,
+    "baseline_wape": 0.1411,
+    "winner_wape": 0.0936,
+    "improvement": 0.0475,
+    "feedback": "AutoARIMA won on 'Cash Inflow (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.27, trend R\u00b2=0.25. Tournament: AutoARIMA=9.4%, AutoETS=12.2%, GradientBoosting=12.3%, SeasonalNaive=14.1%. AutoARIMA achieved 9.4% WAPE \u2014 4.8pp better than SeasonalNaive baseline (14.1%) vs runner-up AutoETS (12.2%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Weak trend strength (0.248) and weak seasonality (0.273) made the series essentially mean-reverting noise with minimal persistent structure; AutoARIMA's parsimonious ARIMA orders outperformed ETS smoothing (WAPE 0.0936 vs 0.1217) and beat both ML and naive baselines by capturing residual autocorrelation without overfitting.\n\n**When to reuse:** Deploy AutoARIMA first on high-volatility financial series (CV ~0.18) with weak linear trends (<0.25) and moderate seasonal amplitude (0.25\u20130.30) when you have 5+ years of clean history; this pattern consistently favors statistical efficiency over complexity.\n\n**Watch out for:** AutoARIMA may fail if regime shifts (e.g., policy or structural changes) accelerate beyond gradual drift, or if true strong seasonality emerges in recent data; always cross-validate against GradientBoosting on volatile series with suspected structural breaks.",
+    "timestamp": "2026-04-25T23:14:45.402716"
+  },
+  {
+    "run_id": "a8816d8c",
+    "series_label": "Cash Inflow (Volatile)",
+    "series_profile": {
+      "volatility": 0.184,
+      "seasonality_strength": 0.273,
+      "trend_strength": 0.248
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9064,
+    "baseline_wape": 0.1411,
+    "winner_wape": 0.0936,
+    "improvement": 0.0475,
+    "feedback": "AutoARIMA won on 'Cash Inflow (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.27, trend R\u00b2=0.25. Tournament: AutoARIMA=9.4%, SeasonalNaive=14.1%. AutoARIMA achieved 9.4% WAPE \u2014 4.8pp better than SeasonalNaive baseline (14.1%) vs runner-up SeasonalNaive (14.1%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Weak trend (0.248) and weak seasonality (0.273) signal a mean-reverting financial process; high volatility (0.184) adds noise but AutoARIMA's parsimonious ARIMA structure captures residual autocorrelation efficiently without overfitting, beating SeasonalNaive by 33% (WAPE 0.0936 vs 0.1411).\n**When to reuse:** Deploy AutoARIMA first on high-volatility series (CV ~0.18) with trend strength <0.25 and seasonality <0.30 when you have 5+ years of clean history; this profile reliably favors statistical efficiency over smoothing or ML complexity.\n**Watch out for:** AutoARIMA may fail if regime shifts accelerate beyond gradual drift or if true structural changes occur (e.g., policy shocks); always validate against GradientBoosting on volatile financial series suspected of breaks.",
+    "timestamp": "2026-04-25T23:15:16.299050"
+  },
+  {
+    "run_id": "0de7fdbe",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, GradientBoosting=3.3%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up GradientBoosting (3.3%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Seasonality strength of 0.981 (extremely high) with weak trend (0.11) is the canonical case for exponential smoothing\u2014AutoETS's additive seasonal decomposition perfectly captures the stable, dominant seasonal pattern without overfitting. Low volatility (0.189) eliminates noise that would favor ML lag features, allowing the simple additive model to shine. WAPE 0.0293 vs SeasonalNaive 0.0456 = 36% improvement.\n\n**When to reuse:** Deploy AutoETS first when seasonality_strength >0.95, trend_strength <0.15, and volatility <0.20. This profile signals a pure seasonal demand pattern where statistical decomposition beats both lag-feature ML and naive seasonal baselines.\n\n**Watch out for:** This rule may fail if regime shifts increase above 0.05 (structural breaks in seasonality) or if trend suddenly strengthens due to market disruption. Also validate AutoETS's forecast direction if bias creeps above \u00b10.02\u2014large systematic bias may indicate seasonal phase shifts that require GradientBoosting's non-linear flexibility.",
+    "timestamp": "2026-04-25T23:16:18.813389"
+  },
+  {
+    "run_id": "313d4c67",
+    "series_label": "Cash Inflow (Volatile)",
+    "series_profile": {
+      "volatility": 0.184,
+      "seasonality_strength": 0.273,
+      "trend_strength": 0.248
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9064,
+    "baseline_wape": 0.1411,
+    "winner_wape": 0.0936,
+    "improvement": 0.0475,
+    "feedback": "AutoARIMA won on 'Cash Inflow (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.27, trend R\u00b2=0.25. Tournament: AutoARIMA=9.4%, SeasonalNaive=14.1%. AutoARIMA achieved 9.4% WAPE \u2014 4.8pp better than SeasonalNaive baseline (14.1%) vs runner-up SeasonalNaive (14.1%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Weak trend strength (0.248) and weak seasonality (0.273) signal a mean-reverting financial process; high volatility (0.184) adds noise but AutoARIMA's parsimonious ARIMA structure captures residual autocorrelation efficiently without overfitting, beating SeasonalNaive by 34% (WAPE 0.0936 vs 0.1411).\n**When to reuse:** Deploy AutoARIMA first on high-volatility series (CV ~0.18) with trend strength <0.25 and seasonality <0.30 when you have 5+ years of clean history; this profile reliably favors statistical efficiency over smoothing or ML complexity.\n**Watch out for:** AutoARIMA may fail if regime shifts accelerate beyond gradual drift or if true structural changes occur (e.g., policy shocks); always validate against GradientBoosting on volatile financial series suspected of breaks.",
+    "timestamp": "2026-04-25T23:17:24.995252"
+  },
+  {
+    "run_id": "22eda792",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, AutoARIMA=3.3%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up AutoARIMA (3.3%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Seasonality strength of 0.981 (canonical strong-seasonal profile) combined with low volatility (0.189) and weak trend (0.11) makes this ideal for exponential smoothing's additive decomposition\u2014AutoETS cleanly isolates the dominant 12-month cycle without overfitting noise. AutoETS delivered WAPE 0.0293 vs SeasonalNaive baseline 0.0456 = 35.8% improvement.\n\n**When to reuse:** Deploy AutoETS first on retail demand forecasts when seasonality_strength >0.95, volatility <0.20, and trend_strength <0.15. This profile\u2014pure seasonal without trend or noise\u2014is precisely where ETS's error/trend/seasonal decomposition excels and beats both naive and complex models.\n\n**Watch out for:** This rule may fail if regime shifts jump above 0.05 (structural breaks in seasonal pattern), if trend suddenly strengthens above 0.4, or if outlier_rate spikes above 10%. In those cases, revert to GradientBoosting's non-linear flexibility. Also monitor forecast bias\u2014if it exceeds \u00b10.03, consider AutoARIMA to capture seasonal AR dependencies more tightly.",
+    "timestamp": "2026-04-25T23:22:12.597998"
+  },
+  {
+    "run_id": "3e34fe63",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, GradientBoosting=3.3%, AutoARIMA=3.3%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up GradientBoosting (3.3%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Strong seasonality (0.98) with high autocorrelation (0.862) and moderate trend (R\u00b2=0.11) align perfectly with ETS's state-space decomposition, allowing it to capture both level and seasonal components more efficiently than boosting or ARIMA.\n\n**When to reuse:** Apply AutoETS first when facing retail/demand data with CV>0.15, seasonal strength >0.90, and lag-1 ACF >0.80, especially with modest trend strength.\n\n**Watch out for:** AutoETS may struggle if regime shifts (0.727 here) become more frequent or abrupt, or if multiple structural breaks occur that violate the stationarity assumptions underlying exponential smoothing.",
+    "timestamp": "2026-04-25T23:24:55.978988"
+  },
+  {
+    "run_id": "0af2f84f",
+    "series_label": "Cash Inflow (Volatile)",
+    "series_profile": {
+      "volatility": 0.184,
+      "seasonality_strength": 0.273,
+      "trend_strength": 0.248
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9064,
+    "baseline_wape": 0.1411,
+    "winner_wape": 0.0936,
+    "improvement": 0.0475,
+    "feedback": "AutoARIMA won on 'Cash Inflow (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.27, trend R\u00b2=0.25. Tournament: AutoARIMA=9.4%, AutoETS=12.2%, GradientBoosting=12.3%, SeasonalNaive=14.1%. AutoARIMA achieved 9.4% WAPE \u2014 4.8pp better than SeasonalNaive baseline (14.1%) vs runner-up AutoETS (12.2%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Moderate autocorrelation (lag1=0.301) with weak seasonality (0.27) and low trend strength (R\u00b2=0.25) created conditions where ARIMA's explicit AR/MA structure outperformed seasonal and ML approaches that overfit to noise in high-volatility data.\n\n**When to reuse:** Prioritize AutoARIMA first when facing volatile series (CV>0.15) with meaningful but non-dominant autocorrelation (0.2<acf_lag1<0.5) and weak seasonal patterns (seasonality_strength<0.3).\n\n**Watch out for:** This rule may fail on volatile series with strong regime shifts (>1.5) or sudden structural breaks where ensemble/gradient boosting methods can adapt faster than fixed ARIMA orders.",
+    "timestamp": "2026-04-25T23:25:06.891539"
+  },
+  {
+    "run_id": "5ed4c566",
+    "series_label": "Support Volume (Volatile)",
+    "series_profile": {
+      "volatility": 0.153,
+      "seasonality_strength": 0.004,
+      "trend_strength": 0.081
+    },
+    "strategy_used": "GradientBoosting",
+    "success_score": 0.8917,
+    "baseline_wape": 0.191,
+    "winner_wape": 0.1083,
+    "improvement": 0.0827,
+    "feedback": "GradientBoosting won on 'Support Volume (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.15, seasonality=0.00, trend R\u00b2=0.08. Tournament: GradientBoosting=10.8%, AutoETS=13.9%, AutoARIMA=14.2%, SeasonalNaive=19.1%. GradientBoosting achieved 10.8% WAPE \u2014 8.3pp better than SeasonalNaive baseline (19.1%) vs runner-up AutoETS (13.9%). Why: exploits lag features to model nonlinear volatility patterns.",
+    "lesson_text": "**Why GradientBoosting won:** High regime shifts (0.772) and weak trend signals (R\u00b2=0.08) made tree-based ensemble methods more effective at capturing non-linear dynamics than linear/exponential smoothing approaches.\n\n**When to reuse:** Prioritize GradientBoosting for volatile support/demand series with regime shifts >0.7, low trend strength, and minimal seasonality\u2014especially when acf suggests no strong temporal dependencies.\n\n**Watch out for:** GradientBoosting may overfit on very short histories or fail if the regime shift was a one-time structural break rather than recurring patterns; validate on recent holdout windows before deployment.",
+    "timestamp": "2026-04-25T23:25:12.929790"
+  },
+  {
+    "run_id": "d2fb56da",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up SeasonalNaive (4.6%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Seasonality strength of 0.981 (extremely strong 12-month cycle) combined with low volatility (0.189) and weak trend (0.11) makes this the canonical pure-seasonal retail profile \u2014 AutoETS's additive decomposition cleanly isolates the dominant seasonal component and forecasts with minimal noise, achieving WAPE 0.0293 vs SeasonalNaive baseline 0.0456 = 35.8% improvement.\n\n**When to reuse:** Deploy AutoETS first on retail demand or similar e-commerce forecasts when seasonality_strength \u22650.95, volatility \u22640.20, and trend_strength \u22640.15. This profile represents stable, repeating seasonal cycles without structural breaks or trend drift \u2014 exactly where ETS's error/trend/seasonal smoothing excels.\n\n**Watch out for:** This rule may fail if regime shifts spike above 0.05 (indicates structural break in seasonal pattern), if trend suddenly strengthens above 0.30 (suggests demand shift beyond seasonal), or if outlier_rate exceeds 10% (noise overwhelms the clean seasonal signal). In those cases, switch to GradientBoosting for non-linear flexibility or use differencing to handle trend changes.",
+    "timestamp": "2026-04-25T23:25:44.407081"
+  },
+  {
+    "run_id": "8a40e048",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, GradientBoosting=3.3%, AutoARIMA=3.3%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up GradientBoosting (3.3%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Extreme seasonality strength (0.981) with very low volatility (0.189) and weak trend (0.11) created a textbook seasonal decomposition scenario where AutoETS's Error-Trend-Seasonality framework optimized all three components simultaneously, capturing subtle seasonal patterns more flexibly than rigid SeasonalNaive while avoiding ARIMA's complexity overkill.\n**When to reuse:** Deploy AutoETS first on retail/demand series with seasonality_strength >0.85, volatility <0.25, and trend_strength <0.25; this profile strongly favors ETS's adaptive smoothing over naive baselines and ARIMA structures designed for weaker seasonality.\n**Watch out for:** AutoETS may struggle if structural regime shifts occur (e.g., supply chain disruptions, policy changes) that break historical seasonal patterns; consider ensemble or GradientBoosting in those cases where seasonal stationarity is violated.",
+    "timestamp": "2026-04-25T23:25:48.467858"
+  },
+  {
+    "run_id": "a2eb3bf6",
+    "series_label": "Cash Inflow (Volatile)",
+    "series_profile": {
+      "volatility": 0.184,
+      "seasonality_strength": 0.273,
+      "trend_strength": 0.248
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9064,
+    "baseline_wape": 0.1411,
+    "winner_wape": 0.0936,
+    "improvement": 0.0475,
+    "feedback": "AutoARIMA won on 'Cash Inflow (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.18, seasonality=0.27, trend R\u00b2=0.25. Tournament: AutoARIMA=9.4%, AutoETS=12.2%, SeasonalNaive=14.1%. AutoARIMA achieved 9.4% WAPE \u2014 4.8pp better than SeasonalNaive baseline (14.1%) vs runner-up AutoETS (12.2%). Why: handles autocorrelated residuals and level shifts well.",
+    "lesson_text": "**Why AutoARIMA won:** Weak trend strength (0.248) and weak seasonality (0.273) signal a mean-reverting financial cash inflow process; high volatility (0.184 CV) adds noise but AutoARIMA's parsimonious ARIMA structure efficiently captures residual autocorrelation without overfitting, beating SeasonalNaive by 34% (WAPE 0.0936 vs 0.1411) and AutoETS by 23% (0.0936 vs 0.1217).\n**When to reuse:** Deploy AutoARIMA first on volatile financial series (CV ~0.18\u20130.20) with trend strength <0.25 and seasonality <0.30 when you have 5+ years of clean history; this profile reliably favors statistical efficiency and mean-reversion modeling over seasonal decomposition or ML complexity.\n**Watch out for:** AutoARIMA may fail if regime shifts accelerate (e.g., policy shocks, structural business changes) or if true autocorrelation patterns strengthen; always validate against GradientBoosting if financial conditions or market structure changes are suspected.",
+    "timestamp": "2026-04-25T23:26:07.615410"
+  },
+  {
+    "run_id": "2d82303c",
+    "series_label": "Support Volume (Volatile)",
+    "series_profile": {
+      "volatility": 0.153,
+      "seasonality_strength": 0.004,
+      "trend_strength": 0.081
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.8607,
+    "baseline_wape": 0.191,
+    "winner_wape": 0.1393,
+    "improvement": 0.0517,
+    "feedback": "AutoETS won on 'Support Volume (Volatile)' (high-volatility, weak-seasonality, weak-trend). Profile: CV=0.15, seasonality=0.00, trend R\u00b2=0.08. Tournament: AutoETS=13.9%, AutoARIMA=14.2%, SeasonalNaive=19.1%. AutoETS achieved 13.9% WAPE \u2014 5.2pp better than SeasonalNaive baseline (19.1%) vs runner-up AutoARIMA (14.2%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** High volatility (0.153) with negligible seasonality (0.004) and weak trend (0.081) created a simple, mean-reverting process where AutoETS's adaptive exponential smoothing with trend and error components outperformed ARIMA's parsimony and SeasonalNaive's seasonal rigidity; the low trend strength prevented overfitting while the error smoothing captured short-term volatility.\n\n**When to reuse:** Prioritize AutoETS for operational metrics with high volatility (>0.15), extremely weak seasonality (<0.01), and weak-to-flat trends (R\u00b2<0.10) where the series bounces around a slowly-drifting mean; this profile is common in support/operational volumes.\n\n**Watch out for:** This rule may fail if regime shifts accelerate (current shift=unknown) or if structural breaks occur in operational support patterns; AutoETS assumes stationary volatility and may struggle during crises or process changes where mean and variance shift together.",
+    "timestamp": "2026-04-25T23:26:28.296356"
+  },
+  {
+    "run_id": "41648810",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, GradientBoosting=3.3%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up GradientBoosting (3.3%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Extreme seasonality strength (0.981) with low volatility (0.189) and weak trend (0.11) is the textbook scenario where AutoETS's Error-Trend-Seasonality decomposition framework excels, adaptively capturing nuanced seasonal dynamics better than SeasonalNaive's rigid approach (36% error reduction: 0.0456\u21920.0293) and outperforming GradientBoosting's complexity on stationary seasonal data.\n**When to reuse:** AutoETS is the first-choice model for retail/demand forecasting with seasonality_strength >0.95, volatility <0.20, and trend_strength <0.15; this profile consistently beats both naive baselines and machine-learning alternatives across 3+ memory cases.\n**Watch out for:** AutoETS may degrade if regime shifts spike above 0.05, structural breaks in seasonal patterns occur (e.g., policy changes, supply disruptions), or trend direction changes from flat to sustained up/down; in those cases GradientBoosting or ensemble methods should be considered.",
+    "timestamp": "2026-04-25T23:28:32.002858"
+  },
+  {
+    "run_id": "fb110148",
+    "series_label": "Retail Demand (Seasonal)",
+    "series_profile": {
+      "volatility": 0.189,
+      "seasonality_strength": 0.981,
+      "trend_strength": 0.11
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9707,
+    "baseline_wape": 0.0456,
+    "winner_wape": 0.0293,
+    "improvement": 0.0163,
+    "feedback": "AutoETS won on 'Retail Demand (Seasonal)' (high-volatility, strong-seasonality, weak-trend). Profile: CV=0.19, seasonality=0.98, trend R\u00b2=0.11. Tournament: AutoETS=2.9%, SeasonalNaive=4.6%. AutoETS achieved 2.9% WAPE \u2014 1.6pp better than SeasonalNaive baseline (4.6%) vs runner-up SeasonalNaive (4.6%). Why: captures exponential smoothing patterns in seasonal/trend structure.",
+    "lesson_text": "**Why AutoETS won:** Extreme seasonality strength (0.981) with low volatility (0.189) and weak trend (0.11) is the textbook scenario where AutoETS's Error-Trend-Seasonality decomposition framework excels, adaptively capturing nuanced seasonal dynamics better than SeasonalNaive's rigid approach (35.8% error reduction: 0.0456 \u2192 0.0293) and outperforming on stationary seasonal retail demand data with strong repeating patterns.\n\n**When to reuse:** AutoETS is the first-choice model for retail/demand forecasting with seasonality_strength >0.95, volatility <0.20, and trend_strength <0.15; this profile consistently beats naive baselines and should be deployed immediately without running full tournaments for efficiency.\n\n**Watch out for:** AutoETS may degrade if regime shifts spike above 0.05, structural breaks in seasonal patterns occur (e.g., supply disruptions, policy changes), or trend direction changes from flat to sustained up/down; in those cases GradientBoosting or ensemble methods should be considered instead.",
+    "timestamp": "2026-04-25T23:32:21.426834"
   }
 ]
