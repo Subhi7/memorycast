@@ -11,6 +11,7 @@ from agents.profiler import profile_series
 from agents.tournament import run_tournament
 from agents.memory import save_lesson, _load, MEMORY_FILE
 from agents.reflection import generate_lesson
+from agents.skill_runner import log_skill_run, SKILL_RUNS_FILE
 
 
 def _make_df(name, y, start="2018-01-01"):
@@ -84,6 +85,9 @@ def main():
     if MEMORY_FILE.exists():
         MEMORY_FILE.unlink()
         print("Cleared existing memory.")
+    if SKILL_RUNS_FILE.exists():
+        SKILL_RUNS_FILE.unlink()
+        print("Cleared existing skill runs.")
 
     print(f"Seeding memory with {len(PAST_SERIES)} past forecasting runs...\n")
 
@@ -103,11 +107,14 @@ def main():
 
         lesson = generate_lesson(profile, results, winner, series_label=label)
         save_lesson(lesson)
+        log_skill_run(label, profile, results, winner, lesson["lesson_text"])
         print(f"    Lesson: {lesson['lesson_text'][:90]}...")
         print()
 
+    from agents.skill_runner import load_skill_runs
     lessons = _load()
-    print(f"Memory seeded with {len(lessons)} lessons.")
+    runs = load_skill_runs()
+    print(f"Memory seeded with {len(lessons)} lessons and {len(runs)} SkillRunEntry records.")
     print("\nVoilà — run the demo now:")
     print("  uv run streamlit run app.py")
     print("\nDemo order for best story:")

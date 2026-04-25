@@ -1,0 +1,104 @@
+[
+  {
+    "run_id": "bfe57020",
+    "series_label": "Collections Volume (Finance)",
+    "series_profile": {
+      "volatility": 0.182,
+      "seasonality_strength": 0.083,
+      "trend_strength": 0.09
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.8257,
+    "baseline_wape": 0.1917,
+    "winner_wape": 0.1743,
+    "improvement": 0.0174,
+    "feedback": "AutoETS beat SeasonalNaive baseline by 1.7pp WAPE",
+    "lesson_text": "For high-volatility, weak-seasonality series, **AutoETS** achieved 17.4% WAPE \u2014 4.0pp better than GradientBoosting. Statistical model exploited the weak seasonality pattern effectively.",
+    "timestamp": "2026-04-25T20:22:41.626113"
+  },
+  {
+    "run_id": "442b0b7d",
+    "series_label": "Cloud Infrastructure Spend",
+    "series_profile": {
+      "volatility": 0.186,
+      "seasonality_strength": 0.0,
+      "trend_strength": 0.127
+    },
+    "strategy_used": "SeasonalNaive",
+    "success_score": 0.831,
+    "baseline_wape": 0.169,
+    "winner_wape": 0.169,
+    "improvement": 0.0,
+    "feedback": "SeasonalNaive beat SeasonalNaive baseline by 0.0pp WAPE",
+    "lesson_text": "For high-volatility, weak-seasonality series, **SeasonalNaive** achieved 16.9% WAPE \u2014 3.0pp better than GradientBoosting. SeasonalNaive was the most stable model across backtest windows.",
+    "timestamp": "2026-04-25T20:22:42.136949"
+  },
+  {
+    "run_id": "a667a8a1",
+    "series_label": "Enterprise Support Tickets",
+    "series_profile": {
+      "volatility": 0.218,
+      "seasonality_strength": 0.064,
+      "trend_strength": 0.153
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.8464,
+    "baseline_wape": 0.2189,
+    "winner_wape": 0.1536,
+    "improvement": 0.0653,
+    "feedback": "AutoARIMA beat SeasonalNaive baseline by 6.5pp WAPE",
+    "lesson_text": "For high-volatility, weak-seasonality series, **AutoARIMA** achieved 15.4% WAPE \u2014 7.5pp better than GradientBoosting. Statistical model exploited the weak seasonality pattern effectively.",
+    "timestamp": "2026-04-25T20:22:42.738558"
+  },
+  {
+    "run_id": "520afb07",
+    "series_label": "E-commerce Orders",
+    "series_profile": {
+      "volatility": 0.136,
+      "seasonality_strength": 0.978,
+      "trend_strength": 0.0
+    },
+    "strategy_used": "AutoETS",
+    "success_score": 0.9836,
+    "baseline_wape": 0.0212,
+    "winner_wape": 0.0164,
+    "improvement": 0.0048,
+    "feedback": "AutoETS beat SeasonalNaive baseline by 0.5pp WAPE",
+    "lesson_text": "For low-volatility, strong-seasonality series, **AutoETS** achieved 1.6% WAPE \u2014 2.1pp better than GradientBoosting. Statistical model exploited the strong seasonality pattern effectively.",
+    "timestamp": "2026-04-25T20:22:43.149674"
+  },
+  {
+    "run_id": "bc024d5d",
+    "series_label": "Seasonal Ad Spend",
+    "series_profile": {
+      "volatility": 0.137,
+      "seasonality_strength": 0.91,
+      "trend_strength": 0.006
+    },
+    "strategy_used": "GradientBoosting",
+    "success_score": 0.97,
+    "baseline_wape": 0.0441,
+    "winner_wape": 0.03,
+    "improvement": 0.0141,
+    "feedback": "GradientBoosting beat SeasonalNaive baseline by 1.4pp WAPE",
+    "lesson_text": "For low-volatility, strong-seasonality series, **GradientBoosting** achieved 3.0% WAPE \u2014 3.0pp better than AutoARIMA. GradientBoosting was the most stable model across backtest windows.",
+    "timestamp": "2026-04-25T20:22:43.590014"
+  },
+  {
+    "run_id": "12aa5d6a",
+    "series_label": "SaaS Annual Recurring Revenue",
+    "series_profile": {
+      "volatility": 0.067,
+      "seasonality_strength": 0.732,
+      "trend_strength": 0.867
+    },
+    "strategy_used": "AutoARIMA",
+    "success_score": 0.9873,
+    "baseline_wape": 0.0465,
+    "winner_wape": 0.0127,
+    "improvement": 0.0338,
+    "feedback": "AutoARIMA beat SeasonalNaive baseline by 3.4pp WAPE",
+    "lesson_text": "For low-volatility, strong-seasonality series, **AutoARIMA** achieved 1.3% WAPE \u2014 3.6pp better than GradientBoosting. Statistical model exploited the strong seasonality pattern effectively.",
+    "timestamp": "2026-04-25T20:22:44.406105"
+  }
+]
