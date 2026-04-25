@@ -101,7 +101,7 @@ def main():
         wapes = {k: f"{v['wape']:.1%}" for k, v in results.items()}
         print(f"    Winner: {winner} | WAPEs: {wapes}")
 
-        lesson = generate_lesson(profile, results, winner)
+        lesson = generate_lesson(profile, results, winner, series_label=label)
         save_lesson(lesson)
         print(f"    Lesson: {lesson['lesson_text'][:90]}...")
         print()

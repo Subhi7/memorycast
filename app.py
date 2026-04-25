@@ -50,21 +50,32 @@ with col_profile:
 
 with col_memory:
     st.subheader("🗂️ Memory Retrieved")
-    memories = retrieve_similar(profile, top_k=2)
+    memories = retrieve_similar(profile, top_k=3)
     if memories:
         for i, mem in enumerate(memories):
             sp = mem.get("series_profile", {})
-            sim_vol = abs(sp.get("volatility", 0) - profile["volatility"])
-            sim_seas = abs(sp.get("seasonality_strength", 0) - profile["seasonality_strength"])
-            similarity = round((1 - (sim_vol + sim_seas) / 2) * 100)
-            with st.expander(f"Memory {i+1} — {mem.get('winning_model','?')} won · {similarity}% similar", expanded=True):
-                st.markdown(f"**Lesson:** {mem.get('lesson_text', '')}")
-                st.markdown(f"**Recommendation:** {mem.get('recommendation', '')}")
-                st.caption(f"Winner WAPE: {mem.get('winner_wape', 0):.1%} | Saved: {mem.get('saved_at','?')[:10]}")
-        top_rec = memories[0].get("winning_model")
-        st.success(f"💡 Agent recommendation: start with **{top_rec}** based on past experience")
+            diff = abs(sp.get("volatility", 0) - profile["volatility"]) + \
+                   abs(sp.get("seasonality_strength", 0) - profile["seasonality_strength"]) + \
+                   abs(sp.get("trend_strength", 0) - profile["trend_strength"])
+            similarity = max(0, round((1 - diff / 3) * 100))
+            source = mem.get("series_label") or "past series"
+            model = mem.get("winning_model", "?")
+            wape = mem.get("winner_wape", 0)
+            with st.expander(f"📌 {source} — **{model}** won · {similarity}% match", expanded=True):
+                st.markdown(mem.get("lesson_text", ""))
+                st.caption(f"WAPE: {wape:.1%} · {mem.get('saved_at','')[:10]}")
+
+        # Agent synthesis: majority vote across retrieved memories
+        from collections import Counter
+        winner_counts = Counter(m.get("winning_model") for m in memories)
+        top_model, top_count = winner_counts.most_common(1)[0]
+        total = len(memories)
+        if top_count > 1:
+            st.success(f"💡 **{top_count}/{total} similar past runs** favoured **{top_model}** — agent will prioritise this in the tournament")
+        else:
+            st.warning(f"💡 **Mixed results** across {total} similar past runs — running full tournament to decide")
     else:
-        st.info("No prior memory found for this series type. Running full model tournament.")
+        st.info("No prior memory found — running full model tournament for the first time.")
 
 st.divider()
 
@@ -115,7 +126,7 @@ if run:
 
     # ── Lesson Learned ────────────────────────────────────────────────────────
     st.subheader("💾 Lesson Learned")
-    lesson = generate_lesson(profile, results, winner)
+    lesson = generate_lesson(profile, results, winner, series_label=series_name)
 
     lesson_col, save_col = st.columns([3, 1])
     with lesson_col:

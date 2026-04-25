@@ -4,7 +4,7 @@ Rule-based now; Claude API stub is ready to drop in.
 """
 
 
-def generate_lesson(profile: dict, results: dict, winner: str) -> dict:
+def generate_lesson(profile: dict, results: dict, winner: str, series_label: str = "") -> dict:
     winner_wape = results[winner]["wape"]
     losers = {k: v["wape"] for k, v in results.items() if k != winner}
     worst_loser = max(losers, key=losers.get)
@@ -13,6 +13,7 @@ def generate_lesson(profile: dict, results: dict, winner: str) -> dict:
     lesson_text = _rule_based_text(profile, winner, winner_wape, worst_loser, improvement_pp)
 
     return {
+        "series_label": series_label,
         "series_profile": {
             "volatility": profile["volatility"],
             "seasonality_strength": profile["seasonality_strength"],
