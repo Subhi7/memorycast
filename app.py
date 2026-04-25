@@ -239,7 +239,7 @@ with tab_forecast:
             fig_comp.add_trace(go.Scatter(
                 x=wdf["ds"], y=wdf["actual"],
                 name=f"Actuals (window {w})" if w == 1 else None,
-                showlegend=(w == 1),
+                showlegend=bool(w == 1),
                 mode="lines+markers",
                 line=dict(color="#22c55e", width=2.5),
                 marker=dict(size=7),
@@ -256,7 +256,7 @@ with tab_forecast:
                 fig_comp.add_trace(go.Scatter(
                     x=wdf["ds"], y=wdf["forecast"],
                     name=f"{model} {'🏆' if is_winner else ''} (WAPE {results[model]['wape']:.1%})" if w == 1 else None,
-                    showlegend=(w == 1),
+                    showlegend=bool(w == 1),
                     mode="lines+markers",
                     line=dict(color=color, width=2.5 if is_winner else 1.5, dash="solid" if is_winner else "dot"),
                     marker=dict(size=6 if is_winner else 4, symbol="diamond" if is_winner else "circle"),
